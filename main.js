@@ -5,26 +5,42 @@ phina.define('MainScene', {
     init: function() {
         this.superInit();
 
+
+        this.floors = [];
+        for(var i = 0; i < 4; i++){
+            this.floors.push(this._createFloor(null, 16 - i * 4));
+        }
+        console.log(this.floors);
+
         this.player = Tako().addChildTo(this);
         this.player.setPosition(this.gridX.center(), 0);
 
-        this.floor = RectangleShape({width: this.gridX.width, height: 300}).addChildTo(this);
-        this.floor.setPosition(this.gridX.center(), this.gridY.width);
     },
 
     update: function(){
-        if(this.player.hitTestElement(this.floor)){
-            this.player.ground();
-            this.player.bottom = this.floor.top;
-        } else {
-            this.player.air();
-        }
+        var self = this;
+        this.floors.forEach(function(floor){
+            if(self.player.hitTestElement(floor)){
+                self.player.ground();
+                self.player.bottom = floor.top;
+            } else {
+                self.player.air();
+            }
+        });
 
         if(this.app.pointer.getPointing()){
-            this.player.charge();
+            self.player.charge();
         } else if(this.app.pointer.getPointingEnd()){
-            this.player.jump();
+            self.player.jump();
         }
+    },
+
+    _createFloor: function(xspan, yspan){
+        var floor = RectangleShape({width: this.gridX.width * 0.3, height: 10}).addChildTo(this);
+        var xspan = xspan || 1 + Math.floor(Math.random() * 14);
+        var yspan = yspan || 16;
+        floor.setPosition(this.gridX.span(xspan), this.gridY.span(yspan));
+        return floor;
     },
 });
 
