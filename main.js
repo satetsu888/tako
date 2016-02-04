@@ -90,7 +90,7 @@ phina.define("Floor", {
     superClass: "phina.display.RectangleShape",
 
     init: function(x, y, width){
-        this.superInit({width: width, height: 10});
+        this.superInit({width: width, height: 30});
         this.setPosition(x, y);
     },
 
