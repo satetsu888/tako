@@ -64,6 +64,7 @@ phina.define("Tako",{
     ground: function(){
         this.physical.force(0, 0);
         this.physical.gravity.set(0, 0);
+        this.stand = true;
     },
     air: function(){
         this.physical.gravity.set(0, 0.98);
@@ -81,6 +82,13 @@ phina.define("Tako",{
     },
     
     move: function(xforce){
+        if(this.stand) return;
+
+        var FORCE_LIMIT = 10;
+
+        xforce = Math.min(xforce, FORCE_LIMIT);
+        xforce = Math.max(xforce, -FORCE_LIMIT);
+
         this.physical.force(xforce, this.physical.velocity.y);
     },
 
