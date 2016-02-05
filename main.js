@@ -36,7 +36,7 @@ phina.define('MainScene', {
             self.player.jump();
         }
 
-        this.player.move(this.orientation.getGamma());
+        this.player.move(this.orientation.getGamma() * 0.1);
     },
 
     _createFloor: function(xspan, yspan){
@@ -100,12 +100,12 @@ phina.define("Tako",{
     move: function(xforce){
         if(this.stand) return;
 
-        var FORCE_LIMIT = 10;
+        var FORCE_LIMIT = 7;
 
         xforce = Math.min(xforce, FORCE_LIMIT);
         xforce = Math.max(xforce, -FORCE_LIMIT);
 
-        this.physical.addForce(xforce, 0);
+        this.physical.force(xforce, this.physical.velocity.y);
     },
 
 });
