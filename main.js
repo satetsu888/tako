@@ -7,8 +7,7 @@ phina.define('MainScene', {
 
         this.orientation = DeviceOrientation();
 
-
-        this.floors = CanvasElement().addChildTo(this);
+        this.floors = Floors().addChildTo(this);
         for(var i = 0; i < 4; i++){
             var floor = this._createFloor(null, 16 - i * 4);
             floor.addChildTo(this.floors);
@@ -122,6 +121,22 @@ phina.define("Floor", {
         this.remove(); 
     },
 
+});
+
+phina.define("Floors", {
+    superClass: "phina.display.CanvasElement",
+
+    init: function(){
+        this.superInit();
+        this.speed = 1;
+    },
+
+    update: function(app){
+        var self = this;
+        this.children.forEach(function(floor){
+            floor.y -= self.speed;
+        });
+    },
 });
 
 
