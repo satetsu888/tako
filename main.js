@@ -8,9 +8,10 @@ phina.define('MainScene', {
         this.orientation = DeviceOrientation();
 
 
-        this.floors = [];
+        this.floors = CanvasElement().addChildTo(this);
         for(var i = 0; i < 4; i++){
-            this.floors.push(this._createFloor(null, 16 - i * 4));
+            var floor = this._createFloor(null, 16 - i * 4);
+            floor.addChildTo(this.floors);
         }
 
         this.player = Tako().addChildTo(this);
@@ -20,9 +21,9 @@ phina.define('MainScene', {
 
     update: function(){
         var self = this;
-        this.floors.forEach(function(floor){
+        this.floors.children.some(function(floor){
             if(self._standTest(self.player, floor)){
-                self.player.ground();
+                self.player.ground(floor);
                 self.player.bottom = floor.top;
             } else {
                 self.player.air();
@@ -47,6 +48,7 @@ phina.define('MainScene', {
     },
 
     _standTest: function(tako, floor){
+        // 雑な当たり判定なのであとでちゃんと直す！！
         return tako.hitTestElement(floor) && tako.bottom <= floor.bottom ? true : false;
     },
 });
@@ -67,12 +69,14 @@ phina.define("Tako",{
 
         this.pow = 0;
         this.stand = false;
+        this.standingObject = null;
     },
 
-    ground: function(){
+    ground: function(obj){
         this.physical.force(0, 0);
         this.physical.gravity.set(0, 0);
         this.stand = true;
+        this.standingObject = obj;
     },
     air: function(){
         this.physical.gravity.set(0, 0.98);
@@ -85,9 +89,12 @@ phina.define("Tako",{
 
     jump: function(){
         if(!this.stand) return;
-        this.physical.force(this.physical.velocity.x, -this.pow);
+        this.physical.addForce(0, -this.pow);
         this.pow = 0;
         this.stand = false;
+        if(this.standingObject){
+            this.standingObject.kicked(this);
+        }
     },
     
     move: function(xforce){
@@ -98,7 +105,7 @@ phina.define("Tako",{
         xforce = Math.min(xforce, FORCE_LIMIT);
         xforce = Math.max(xforce, -FORCE_LIMIT);
 
-        this.physical.force(xforce, this.physical.velocity.y);
+        this.physical.addForce(xforce, 0);
     },
 
 });
@@ -109,6 +116,10 @@ phina.define("Floor", {
     init: function(x, y, width){
         this.superInit({width: width, height: 30});
         this.setPosition(x, y);
+    },
+
+    kicked: function(element){
+        this.remove(); 
     },
 
 });
