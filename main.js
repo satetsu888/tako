@@ -55,8 +55,16 @@ phina.define("Tako",{
     superClass: "phina.display.Sprite",
 
     init: function () {
-        this.superInit("tako", 160, 200);
-        this.setScale(1);
+        var SCALE = 0.5;
+        this.superInit("tako", 160 * SCALE, 200 * SCALE);
+
+        this.srcRect = {
+            x: 0,
+            y: 0,
+            width: this.width / SCALE,
+            height: this.height / SCALE,
+        };
+
         this.pow = 0;
         this.stand = false;
     },
