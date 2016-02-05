@@ -84,6 +84,7 @@ phina.define("Tako",{
     },
 
     jump: function(){
+        if(!this.stand) return;
         this.physical.force(this.physical.velocity.x, -this.pow);
         this.pow = 0;
         this.stand = false;
