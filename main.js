@@ -7,11 +7,7 @@ phina.define('MainScene', {
 
         this.orientation = DeviceOrientation();
 
-        this.floors = Floors().addChildTo(this);
-        for(var i = 0; i < 4; i++){
-            var floor = this._createFloor(null, 16 - i * 4);
-            floor.addChildTo(this.floors);
-        }
+        this.floors = Floors(this).addChildTo(this);
 
         this.player = Tako().addChildTo(this);
         this.player.setPosition(this.gridX.center(), 0);
@@ -38,13 +34,6 @@ phina.define('MainScene', {
         this.player.move(this.orientation.getGamma() * 0.1);
     },
 
-    _createFloor: function(xspan, yspan){
-        var xspan = xspan || 1 + Math.floor(Math.random() * 14);
-        var yspan = yspan || 16;
-        var floor = Floor(this.gridX.span(xspan), this.gridX.span(yspan), this.gridX.width * 0.3);
-        floor.addChildTo(this);
-        return floor;
-    },
 
     _standTest: function(tako, floor){
         // 雑な当たり判定なのであとでちゃんと直す！！
@@ -126,9 +115,16 @@ phina.define("Floor", {
 phina.define("Floors", {
     superClass: "phina.display.CanvasElement",
 
-    init: function(){
+    init: function(scene){
         this.superInit();
+        this.scene = scene;
+
         this.speed = 1;
+
+        for(var i = 0; i < 4; i++){
+            var floor = this.createFloor(null, 16 - i * 4);
+            floor.addChildTo(this);
+        }
     },
 
     update: function(app){
@@ -136,6 +132,19 @@ phina.define("Floors", {
         this.children.forEach(function(floor){
             floor.y -= self.speed;
         });
+
+        if(app.frame % 200 == 0){
+            var floor = this.createFloor();
+            floor.addChildTo(this);
+        }
+    },
+
+    createFloor: function(xspan, yspan){
+        var xspan = xspan || 1 + Math.floor(Math.random() * 14);
+        var yspan = yspan || 16;
+        var scene = this.scene;
+        var floor = Floor(scene.gridX.span(xspan), scene.gridY.span(yspan), scene.gridX.width * 0.3);
+        return floor;
     },
 });
 
