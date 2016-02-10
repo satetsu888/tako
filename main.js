@@ -54,8 +54,6 @@ phina.define("Tako",{
 
         self.pow = 0;
         self.tweener.call(function(){
-            console.log("call" + self.pow);
-            console.log(self.tweener._tasks);
             if(self.pow <= 0){
                 self.tweener._tasks = [self.tweener._tasks[0]];
                 self.tweener.wait(1);
@@ -70,7 +68,7 @@ phina.define("Tako",{
     },
 
     animationTime: function(){
-        return 101 - (this.pow * 2);
+        return 61 - (this.pow * 2);
     },
 
     ground: function(obj){
@@ -85,7 +83,7 @@ phina.define("Tako",{
 
     charge: function(){
         var self = this;
-        if(self.pow < 50){
+        if(self.pow < 30){
             self.pow++;
         }
     },
