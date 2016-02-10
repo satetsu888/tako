@@ -68,7 +68,7 @@ phina.define("Tako",{
     },
 
     animationTime: function(){
-        return 61 - (this.pow * 2);
+        return 121 - (this.pow * 4);
     },
 
     ground: function(obj){
@@ -89,10 +89,11 @@ phina.define("Tako",{
     },
 
     jump: function(){
+        var energy = this.pow;
+        this.pow = 0;
         this.tweener.set({alpha: 1.0});
         if(!this.stand) return;
-        this.physical.addForce(0, -this.pow);
-        this.pow = 0;
+        this.physical.addForce(0, -energy);
         this.stand = false;
         if(this.standingObject){
             this.standingObject.kicked(this);
