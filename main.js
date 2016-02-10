@@ -46,18 +46,31 @@ phina.define("Tako",{
 
     init: function () {
         var SCALE = 0.5;
-        this.superInit("tako", 160 * SCALE, 200 * SCALE);
+        this.superInit("tako");
+        var self = this;
+        self.width = 160 * SCALE;
+        self.height = 200 * SCALE;
 
-        this.srcRect = {
-            x: 0,
-            y: 0,
-            width: this.width / SCALE,
-            height: this.height / SCALE,
-        };
 
-        this.pow = 0;
-        this.stand = false;
-        this.standingObject = null;
+        self.pow = 0;
+        self.tweener.call(function(){
+            console.log("call" + self.pow);
+            console.log(self.tweener._tasks);
+            if(self.pow <= 0){
+                self.tweener._tasks = [self.tweener._tasks[0]];
+                self.tweener.wait(1);
+            } else { 
+                self.tweener._tasks = [self.tweener._tasks[0]];
+                self.tweener.fadeOut(self.animationTime()).fadeIn(self.animationTime()).play();
+            }
+        }).setLoop(true);
+
+        self.stand = false;
+        self.standingObject = null;
+    },
+
+    animationTime: function(){
+        return 101 - (this.pow * 2);
     },
 
     ground: function(obj){
@@ -70,12 +83,15 @@ phina.define("Tako",{
         this.physical.gravity.set(0, 0.98);
     },
 
-
     charge: function(){
-        this.pow++;
+        var self = this;
+        if(self.pow < 50){
+            self.pow++;
+        }
     },
 
     jump: function(){
+        this.tweener.set({alpha: 1.0});
         if(!this.stand) return;
         this.physical.addForce(0, -this.pow);
         this.pow = 0;
