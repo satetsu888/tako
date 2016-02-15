@@ -3,6 +3,17 @@ phina.globalize();
 phina.define('MainScene', {
     superClass: 'CanvasScene',
     init: function() {
+        var firebase = new Firebase('https://popping-fire-3071.firebaseio.com/');
+
+        firebase.authWithOAuthRedirect("twitter", function(error, authData) {
+            if (error) {
+                console.log(error.code);
+                console.log("Login Failed!", error);
+            } else {
+                console.log("Authenticated successfully with payload:", authData);
+            }
+        });
+
         this.superInit();
 
         this.orientation = DeviceOrientation();
@@ -11,6 +22,8 @@ phina.define('MainScene', {
 
         this.player = Tako().addChildTo(this);
         this.player.setPosition(this.gridX.center(), 0);
+
+        this.fb = firebase;
 
     },
 
@@ -32,6 +45,8 @@ phina.define('MainScene', {
         }
 
         this.player.move(this.orientation.getGamma() * 0.1);
+
+        this.fb.set({tako: {x: this.player.x, y: this.player.y}});
     },
 
 
