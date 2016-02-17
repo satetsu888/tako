@@ -5,14 +5,24 @@ phina.define('MainScene', {
     init: function() {
         var firebase = new Firebase('https://popping-fire-3071.firebaseio.com/');
 
-        firebase.authWithOAuthRedirect("twitter", function(error, authData) {
+        function authDataCallback(authData) {
+            if (authData) {
+                console.log("User " + authData.uid + " is logged in with " + authData.provider);
+            } else {
+                console.log("User is logged out");
+            }
+        }
+
+        function authHandler(error, authData) {
+            console.log(error);
             if (error) {
-                console.log(error.code);
                 console.log("Login Failed!", error);
             } else {
                 console.log("Authenticated successfully with payload:", authData);
             }
-        });
+        }
+        firebase.onAuth(authDataCallback);
+        firebase.authAnonymously(authHandler);
 
         this.superInit();
 
